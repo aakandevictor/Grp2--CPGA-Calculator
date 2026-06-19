@@ -1,0 +1,95 @@
+@startuml
+' All 10 classes with three-compartment notation
+class Person <<abstract>> {
+  - _date_of_birth: date
+  + full_name: str
+  + person_id: str
+  + age: int
+  + __str__()
+  + __repr__()
+}
+class Student {
+  - _matric_no: str
+  - _level: int
+  - _department: str
+  - __semesters: list
+  - __gpa: float
+  + add_semester()
+  + compute_cgpa()
+  + honour_class: str
+  + get_semesters()
+  + generate_transcript()
+}
+class Lecturer {
+  - _staff_id: str
+  - _rank: str
+  - _department: str
+  + __str__()
+}
+class ResearchWorkerMixin <<mixin>> {
+  - _supervisor: Lecturer
+  - _thesis_title: str
+  - _abstract_submitted: bool
+  + submit_abstract()
+  + research_summary()
+}
+class GraduateStudent {
+  - _degree_type: str
+  + __str__()
+}
+class Course {
+  - _course_code: str
+  - _title: str
+  - _credit_units: int
+  - _prerequisite_codes: list
+  + __eq__()
+  + __lt__()
+  + __hash__()
+  + __add__()
+  + __radd__()
+}
+class EnrolmentRecord {
+  - student: Student
+  - course: Course
+  - semester_label: str
+  - _score: float
+  + grade: str
+  + grade_point: float
+}
+class Semester {
+  - _academic_year: str
+  - _semester_no: int
+  - __records: list
+  + add_record()
+  + wgpa: float
+  + validate_credit_load()
+  + generate_transcript_section()
+}
+class Department {
+  - _dept_code: str
+  - _name: str
+  - __courses: list
+  - __students: list
+  - __lecturers: list
+  + add_course()
+  + enrol_student()
+  + add_lecturer()
+  + honours_distribution()
+  + department_report()
+}
+class GradeError {
+  - field: str
+  - value: object
+  - valid_range: str
+}
+
+Person <|-- Student
+Person <|-- Lecturer
+Student <|-- GraduateStudent
+ResearchWorkerMixin <|-- GraduateStudent
+Department *-- Course
+Department o-- Student
+Department o-- Lecturer
+Semester o-- EnrolmentRecord
+GraduateStudent ..|> ResearchWorkerMixin
+@enduml
