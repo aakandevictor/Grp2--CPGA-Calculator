@@ -19,7 +19,7 @@ University Course Registration and CGPA Calculator is a Python OOP application f
   Alabi Moses Olabode          CPE/2023/1026
  | Alabi Solomon Ayomide        CPE/2023/1027
   Allison Idris Adeola         CPE/2023/1028
-  Amos Timilehin Samson        CPE/2023/1029
+ | Amos Timilehin Samson        CPE/2023/1029
 
 ## OOP Concepts Demonstrated
 
