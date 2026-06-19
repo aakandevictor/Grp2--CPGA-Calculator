@@ -8,7 +8,7 @@ University Course Registration and CGPA Calculator is a Python OOP application f
 | Afolabi Oluwajuwon Ayomiposi  CPE/2023/1015
 | Afolayan Emmanuel Ibukunoluwa CPE/2023/1016 
 | Agbotuta David Oghenekome     CPE/2023/1017
-  Ajanaku Amidat Oluwadamilola CPE/2023/1018
+| Ajanaku Amidat Oluwadamilola CPE/2023/1018
   Ajibade Michael Adeyemi      CPE/2023/1019
   Ajiboye Adesewa Christianah CPE/2023/1020
   Akanbi Kingsley Moyosore    CPE/2023/1021
