@@ -15,6 +15,7 @@ from src.exceptions import CreditLoadError, PrerequisiteError
 
 
 def transcript_formatter(obj):
+    """Duck-typed transcript formatter — no isinstance() check."""
     return obj.generate_transcript()
 
 
@@ -94,6 +95,7 @@ def main() -> None:
         department.enrol_student(student)
         print(student)
 
+    # Graduate student with research supervision
     grad_student = GraduateStudent(
         "Halima Bello",
         "CPE/2025/004",
@@ -108,12 +110,14 @@ def main() -> None:
     print("=" * 60)
     print("SECTION: SEMESTER 1 ENROLMENT")
     print("=" * 60)
-    semester1 = Semester("2025/2026", 1)
-    # Enrol only courses without prerequisites in Semester 1
+    semester1 = Semester("2023/2024", 1)
     non_prereq_courses = [c for c in courses if not c.prerequisite_codes]
-    scores = [85, 73, 61, 49]  # scores for non-prereq courses covering A,B,C,D
+    # Scores covering ALL grade boundaries: A, B, C, D, E, F
+    scores = [85, 73, 61, 49, 42, 35]
     for course, score in zip(non_prereq_courses, scores):
-        record = EnrolmentRecord(students[0], course, "2025/2026 Semester 1", score)
+        record = EnrolmentRecord(
+            students[0], course, "2023/2024 Semester 1", score
+        )
         semester1.add_record(record)
     students[0].add_semester(semester1)
     print(semester1)
@@ -122,27 +126,39 @@ def main() -> None:
     print("=" * 60)
     print("SECTION: PREREQUISITE DEMONSTRATION")
     print("=" * 60)
-    semester2 = Semester("2025/2026", 2)
+    # First attempt — student[1] has NOT passed CPE101 yet
+    semester2 = Semester("2023/2024", 2)
     try:
-        record = EnrolmentRecord(students[0], courses[4], "2025/2026 Semester 2", 78)
+        record = EnrolmentRecord(
+            students[1], courses[4], "2023/2024 Semester 2", 78
+        )
         semester2.add_record(record)
     except PrerequisiteError as error:
         print("Caught prerequisite error:", error)
 
-    completed_semester = Semester("2024/2025", 1)
-    completed_semester.add_record(EnrolmentRecord(students[0], courses[0], "2024/2025 Semester 1", 80))
-    students[0].add_semester(completed_semester)
-    record = EnrolmentRecord(students[0], courses[4], "2025/2026 Semester 2", 78)
+    # Give student[1] a completed semester with CPE101 passed
+    completed_semester = Semester("2022/2023", 1)
+    completed_semester.add_record(
+        EnrolmentRecord(
+            students[1], courses[0], "2022/2023 Semester 1", 80
+        )
+    )
+    students[1].add_semester(completed_semester)
+
+    # Now enrol in CPE102 — prerequisite CPE101 now satisfied
+    record = EnrolmentRecord(
+        students[1], courses[4], "2023/2024 Semester 2", 78
+    )
     semester2.add_record(record)
-    students[0].add_semester(semester2)
+    students[1].add_semester(semester2)
+    print("Prerequisite satisfied — enrolled in CPE102:")
     print(semester2)
 
     print("=" * 60)
     print("SECTION: CREDIT LOAD DEMONSTRATION")
     print("=" * 60)
-    heavy_semester = Semester("2025/2026", 2)
+    heavy_semester = Semester("2023/2024", 2)
     try:
-        # Use heavy 6-unit courses with no prerequisites to trigger CreditLoadError
         heavy_courses = [
             Course("HC101", "Heavy Course 1", 6),
             Course("HC102", "Heavy Course 2", 6),
@@ -151,12 +167,21 @@ def main() -> None:
             Course("HC105", "Heavy Course 5", 6),
         ]
         for c in heavy_courses:
-            heavy_semester.add_record(EnrolmentRecord(students[1], c, "2025/2026 Semester 2", 65))
+            heavy_semester.add_record(
+                EnrolmentRecord(
+                    students[2], c, "2023/2024 Semester 2", 65
+                )
+            )
     except CreditLoadError as error:
-        print("Caught credit load error:", error)
+        print("Caught maximum credit load error:", error)
 
-    small_semester = Semester("2025/2026", 1)
-    small_semester.add_record(EnrolmentRecord(students[1], courses[0], "2025/2026 Semester 1", 70))
+    # Minimum credit load check
+    small_semester = Semester("2023/2024", 1)
+    small_semester.add_record(
+        EnrolmentRecord(
+            students[2], courses[0], "2023/2024 Semester 1", 70
+        )
+    )
     try:
         small_semester.validate_credit_load()
     except CreditLoadError as error:
@@ -165,7 +190,8 @@ def main() -> None:
     print("=" * 60)
     print("SECTION: COMPUTE AND DISPLAY CGPA")
     print("=" * 60)
-    for student in students:
+    # Show transcripts for first 3 students
+    for student in students[:3]:
         print(student)
         print(student.generate_transcript())
         print("-" * 60)
@@ -174,7 +200,7 @@ def main() -> None:
     print("SECTION: GRADUATE STUDENT RESEARCH")
     print("=" * 60)
     grad_student.supervisor = lecturers[0]
-    grad_student.thesis_title = "AI for Sustainable Energy Management"
+    grad_student.thesis_title = "AI for Sustainable Energy Management in Nigeria"
     grad_student.submit_abstract()
     print(grad_student.research_summary())
 
@@ -184,27 +210,37 @@ def main() -> None:
     print(department.department_report())
 
     print("=" * 60)
-    print("SECTION: DUCK TYPING")
+    print("SECTION: DUCK TYPING DEMONSTRATION")
     print("=" * 60)
 
     class TranscriptSource:
-        def generate_transcript(self) -> str:
-            return "Custom transcript from a duck-typed object"
+        """Mock object to demonstrate duck typing."""
 
+        def generate_transcript(self) -> str:
+            return "Custom transcript from a duck-typed object."
+
+    print("--- Student transcript via duck typing ---")
     print(transcript_formatter(students[0]))
+    print("--- Mock object transcript via duck typing ---")
     print(transcript_formatter(TranscriptSource()))
 
     print("=" * 60)
-    print("SECTION: OPERATOR OVERLOADING")
+    print("SECTION: OPERATOR OVERLOADING DEMONSTRATION")
     print("=" * 60)
     sorted_courses = sorted(courses)
-    print("Sorted courses:")
+    print("Courses sorted alphabetically by code:")
     for course in sorted_courses:
-        print(course.course_code)
-    print("Course equality CPE101 == CPE 101:", courses[0] == Course("CPE 101", "Intro", 3))
-    print("Total credit units for two courses:", courses[0] + courses[1])
-    print("Total credit units in list using sum():", sum(courses, 0))
-    print("CPE101 in semester1:", "CPE101" in semester1)
+        print(f"  {course.course_code} — {course.title}")
+
+    print(f"\nCourse equality (CPE101 == CPE101): {courses[0] == courses[0]}")
+    print(f"Course equality (CPE101 == MTH101): {courses[0] == courses[1]}")
+    print(f"Course ordering (CPE101 < MTH101):  {courses[0] < courses[1]}")
+    print(f"CPE101 in semester1:                {'CPE101' in semester1}")
+    print(f"CPE999 in semester1:                {'CPE999' in semester1}")
+
+    print("=" * 60)
+    print("SYSTEM DEMONSTRATION COMPLETE")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
