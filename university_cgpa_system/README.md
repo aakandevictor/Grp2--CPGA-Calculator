@@ -5,7 +5,7 @@ University Course Registration and CGPA Calculator is a Python OOP application f
 ## Team Members
 
 | Full Name | Matric Number
-| Afolabi Oluwajuwon Ayomiposi  CPE/2023/1015
+| Afolabi Oluwajuwon Ayomiposi CPE/2023/1015
 | Afolayan Emmanuel Ibukunoluwa CPE/2023/1016 
 | Agbotuta David Oghenekome     CPE/2023/1017
 | Ajanaku Amidat Oluwadamilola  CPE/2023/1018
