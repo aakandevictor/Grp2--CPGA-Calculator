@@ -24,12 +24,12 @@ def main() -> None:
     print("SECTION: CREATE COURSES")
     print("=" * 60)
     courses = [
-        Course("CPE101", "Introduction to Computing", 3),
-        Course("MTH101", "Calculus I", 4),
-        Course("PHY101", "Physics I", 3),
-        Course("GST101", "Use of English", 2),
-        Course("CPE102", "Programming Fundamentals", 3, ["CPE101"]),
-        Course("CPE201", "Data Structures", 4, ["CPE102"]),
+        Course("CPE302", "Computer Architecture", 3),
+        Course("CPE306", "Microprocessors and Applications", 3),
+        Course("ABE302", "Agricultural Engineering Fundamentals", 3),
+        Course("GST301", "Entrepreneurship Development", 2),
+        Course("CPE310", "OOP with Python", 3, ["CPE302"]),
+        Course("CPE312", "Software Engineering", 3, ["CPE310"]),
     ]
     for course in courses:
         print(course)
@@ -47,18 +47,39 @@ def main() -> None:
     print("=" * 60)
     lecturers = [
         Lecturer(
-            "Amina Yusuf",
+            "Soladoye Adewale Abiodun",
             "CPE/STAFF/0001",
             "Computer Engineering",
-            date(1980, 4, 12),
-            "PROFESSOR",
+            date(1978, 5, 10),
+            "LECTURER",
         ),
         Lecturer(
-            "Oluwaseun Ade",
+            "Adebiyi Temitope Funmilayo",
             "CPE/STAFF/0002",
             "Computer Engineering",
-            date(1985, 9, 20),
-            "LECTURER",
+            date(1980, 9, 14),
+            "SR_LECTURER",
+        ),
+        Lecturer(
+            "Asaolu Oluwaseun Oluwole",
+            "CPE/STAFF/0003",
+            "Computer Engineering",
+            date(1975, 3, 22),
+            "ASSOC_PROF",
+        ),
+        Lecturer(
+            "Okomba Nnamdi",
+            "CPE/STAFF/0004",
+            "Computer Engineering",
+            date(1972, 11, 5),
+            "ASSOC_PROF",
+        ),
+        Lecturer(
+            "Olatayo Moses",
+            "CPE/STAFF/0005",
+            "Computer Engineering",
+            date(1968, 7, 30),
+            "PROFESSOR",
         ),
     ]
     for lecturer in lecturers:
@@ -70,24 +91,24 @@ def main() -> None:
     print("=" * 60)
     students = [
         Student(
-            "Chinwe Nnadi",
-            "CPE/2022/001",
+            "Afolabi Oluwajuwon Ayomiposi",
+            "CPE/2023/1015",
             "Computer Engineering",
-            date(2003, 5, 11),
-            200,
+            date(2004, 3, 15),
+            300,
         ),
         Student(
-            "Emeka Okafor",
-            "CPE/2021/002",
+            "Afolayan Emmanuel Ibukunoluwa",
+            "CPE/2023/1016",
             "Computer Engineering",
-            date(2002, 8, 30),
-            400,
+            date(2004, 7, 22),
+            300,
         ),
         Student(
-            "Bola Samuel",
-            "CPE/2020/003",
+            "Agbotuta David Oghenekome",
+            "CPE/2023/1017",
             "Computer Engineering",
-            date(2001, 11, 4),
+            date(2004, 1, 10),
             300,
         ),
     ]
@@ -95,12 +116,12 @@ def main() -> None:
         department.enrol_student(student)
         print(student)
 
-    # Graduate student with research supervision
+    # Graduate student — Amos Timilehin as postgrad example
     grad_student = GraduateStudent(
-        "Halima Bello",
-        "CPE/2025/004",
+        "Amos Timilehin Samson",
+        "CPE/2023/1029",
         "Computer Engineering",
-        date(1998, 2, 14),
+        date(2000, 6, 18),
         level=700,
         degree_type="MSc",
     )
@@ -121,12 +142,12 @@ def main() -> None:
         semester1.add_record(record)
     students[0].add_semester(semester1)
     print(semester1)
-    print("Contains CPE101:", "CPE101" in semester1)
+    print("Contains CPE302:", "CPE302" in semester1)
 
     print("=" * 60)
     print("SECTION: PREREQUISITE DEMONSTRATION")
     print("=" * 60)
-    # First attempt — student[1] has NOT passed CPE101 yet
+    # First attempt — student[1] has NOT passed CPE302 yet
     semester2 = Semester("2023/2024", 2)
     try:
         record = EnrolmentRecord(
@@ -136,7 +157,7 @@ def main() -> None:
     except PrerequisiteError as error:
         print("Caught prerequisite error:", error)
 
-    # Give student[1] a completed semester with CPE101 passed
+    # Give student[1] a completed semester with CPE302 passed
     completed_semester = Semester("2022/2023", 1)
     completed_semester.add_record(
         EnrolmentRecord(
@@ -145,13 +166,13 @@ def main() -> None:
     )
     students[1].add_semester(completed_semester)
 
-    # Now enrol in CPE102 — prerequisite CPE101 now satisfied
+    # Now enrol in CPE310 — prerequisite CPE302 now satisfied
     record = EnrolmentRecord(
         students[1], courses[4], "2023/2024 Semester 2", 78
     )
     semester2.add_record(record)
     students[1].add_semester(semester2)
-    print("Prerequisite satisfied — enrolled in CPE102:")
+    print("Prerequisite satisfied — Afolayan Emmanuel enrolled in CPE310:")
     print(semester2)
 
     print("=" * 60)
@@ -190,7 +211,6 @@ def main() -> None:
     print("=" * 60)
     print("SECTION: COMPUTE AND DISPLAY CGPA")
     print("=" * 60)
-    # Show transcripts for first 3 students
     for student in students[:3]:
         print(student)
         print(student.generate_transcript())
@@ -232,10 +252,10 @@ def main() -> None:
     for course in sorted_courses:
         print(f"  {course.course_code} — {course.title}")
 
-    print(f"\nCourse equality (CPE101 == CPE101): {courses[0] == courses[0]}")
-    print(f"Course equality (CPE101 == MTH101): {courses[0] == courses[1]}")
-    print(f"Course ordering (CPE101 < MTH101):  {courses[0] < courses[1]}")
-    print(f"CPE101 in semester1:                {'CPE101' in semester1}")
+    print(f"\nCourse equality (CPE302 == CPE302): {courses[0] == courses[0]}")
+    print(f"Course equality (CPE302 == CPE306): {courses[0] == courses[1]}")
+    print(f"Course ordering (ABE302 < CPE302):  {courses[2] < courses[0]}")
+    print(f"CPE302 in semester1:                {'CPE302' in semester1}")
     print(f"CPE999 in semester1:                {'CPE999' in semester1}")
 
     print("=" * 60)
