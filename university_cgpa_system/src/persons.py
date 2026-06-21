@@ -1,4 +1,6 @@
-"""Person-related entities for the FUOYE CGPA system."""
+filepath = '/content/Grp2--CPGA-Calculator/university_cgpa_system/src/persons.py'
+
+content = '''"""Person-related entities for the FUOYE CGPA system."""
 
 from __future__ import annotations
 
@@ -55,7 +57,7 @@ class Student(Person):
     """Concrete student class representing a university undergraduate."""
 
     _VALID_LEVELS = [100, 200, 300, 400, 500, 600, 700, 800]
-    _MATRIC_PATTERN = re.compile(r"^[A-Z]{3,6}/\d{4}/\d{3,4}$")  # fixed: 3 or 4 digit matric
+    _MATRIC_PATTERN = re.compile(r"^[A-Z]{3,6}/\d{4}/\d{3,4}$")
 
     def __init__(
         self,
@@ -111,4 +113,37 @@ class Student(Person):
     def level(self, value: int) -> None:
         if value not in self._VALID_LEVELS:
             raise ValueError(
-                f"level must be one of {self.
+                f"level must be one of {self._VALID_LEVELS}, got {value}"
+            )
+        self._level = value
+
+    @property
+    def honour_class(self) -> str:
+        cgpa = self.compute_cgpa()
+        if cgpa >= 4.50:
+            return "First Class"
+        if 3.50 <= cgpa <= 4.49:
+            return "Second Class Upper"
+        if 2.40 <= cgpa <= 3.49:
+            return "Second Class Lower"
+        if 1.50 <= cgpa <= 2.39:
+            return "Third Class"
+        if 1.00 <= cgpa <= 1.49:
+            return "Pass"
+        return "Fail"
+
+    def add_semester(self, semester: "Semester") -> None:
+        self.__semesters.append(semester)
+        self.__gpa = self.compute_cgpa()
+
+    def compute_cgpa(self) -> float:
+        records = [
+            record
+            for semester in self.__semesters
+            for record in semester.get_records()
+        ]
+        total_units = sum(record.course.credit_units for record in records)
+        if total_units == 0:
+            return 0.0
+        total_points = sum(
+            record.grade_point * record.course.credit_units for record
