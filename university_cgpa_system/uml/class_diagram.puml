@@ -1,95 +1,228 @@
 @startuml
-' All 10 classes with three-compartment notation
-class Person <<abstract>> {
-  - _date_of_birth: date
-  + full_name: str
-  + person_id: str
-  + age: int
+skinparam classAttributeIconSize 0
+
+' =========================
+' ABSTRACT & MIXINS
+' =========================
+
+abstract class Person <<ABC>> {
+  # _full_name : str
+  # _person_id : str
+  # _date_of_birth : date
+
+  + full_name <<abstract property>>
+  + person_id <<abstract property>>
+  + age : int <<computed>>
+
+  + __init__(full_name, person_id, dob)
+  + __str__() : str
+  + __repr__() : str
+}
+
+class ResearchWorkerMixin <<mixin>> {
+  # _supervisor : Lecturer
+  # _thesis_title : str
+  # _abstract_submitted : bool
+
+  + supervisor <<property>>
+  + thesis_title <<property>>
+  + submit_abstract() : None
+  + research_summary() : str
+  + __init__(*args, **kwargs)
+}
+
+' =========================
+' CORE PEOPLE CLASSES
+' =========================
+
+class Student {
+  - __matric_no : str
+  - __level : int
+  - __department : str
+  - __semesters : list
+  - __gpa : float
+
+  + matric_no <<regex validated>>
+  + level <<100-800>>
+  + compute_cgpa() : float
+  + generate_transcript() : str
+  + honour_class <<computed>>
+  + add_semester(semester)
   + __str__()
   + __repr__()
 }
-class Student {
-  - _matric_no: str
-  - _level: int
-  - _department: str
-  - __semesters: list
-  - __gpa: float
-  + add_semester()
-  + compute_cgpa()
-  + honour_class: str
-  + get_semesters()
-  + generate_transcript()
-}
-class Lecturer {
-  - _staff_id: str
-  - _rank: str
-  - _department: str
-  + __str__()
-}
-class ResearchWorkerMixin <<mixin>> {
-  - _supervisor: Lecturer
-  - _thesis_title: str
-  - _abstract_submitted: bool
-  + submit_abstract()
-  + research_summary()
-}
+
 class GraduateStudent {
-  - _degree_type: str
-  + __str__()
+  - __degree_type : str
+
+  + degree_type <<MSc|PhD>>
+  + __str__() : str
+  + __repr__() : str
 }
+
+class Lecturer {
+  - __staff_id : str
+  - __rank : str
+  - __department : str
+
+  + staff_id <<regex validated>>
+  + rank <<enum>>
+  + __str__() : str
+  + __repr__() : str
+}
+
+' =========================
+' ACADEMIC CLASSES
+' =========================
+
 class Course {
-  - _course_code: str
-  - _title: str
-  - _credit_units: int
-  - _prerequisite_codes: list
-  + __eq__()
-  + __lt__()
-  + __hash__()
-  + __add__()
-  + __radd__()
+  - __course_code : str
+  - __title : str
+  - __credit_units : int
+  - __prerequisite_codes : list
+
+  + course_code <<regex>>
+  + credit_units <<1-6>>
+  + title : str <<property>>
+
+  + __eq__(other) : bool
+  + __lt__(other) : bool
+  + __hash__() : int
+  + __str__()
+  + __repr__()
 }
+
 class EnrolmentRecord {
-  - student: Student
-  - course: Course
-  - semester_label: str
-  - _score: float
-  + grade: str
-  + grade_point: float
+  - __student : Student
+  - __course : Course
+  - __semester_label : str
+  - __score : float
+
+  + score <<0.0-100.0>>
+  + grade <<computed>>
+  + grade_point <<computed>>
+
+  + __str__()
+  + __repr__()
 }
+
 class Semester {
-  - _academic_year: str
-  - _semester_no: int
-  - __records: list
-  + add_record()
-  + wgpa: float
+  - __academic_year : str
+  - __semester_no : int
+  - __records : list
+
+  + wgpa : float <<computed>>
+  + add_record(record)
   + validate_credit_load()
   + generate_transcript_section()
+
+  + __len__() : int
+  + __contains__(course_code)
+  + __iter__()
+  + __str__()
+  + __repr__()
 }
+
 class Department {
-  - _dept_code: str
-  - _name: str
-  - __courses: list
-  - __students: list
-  - __lecturers: list
-  + add_course()
-  + enrol_student()
-  + add_lecturer()
-  + honours_distribution()
-  + department_report()
+  - __dept_code : str
+  - __name : str
+  - __courses : list
+  - __students : list
+  - __lecturers : list
+
+  + add_course(course : Course)
+  + remove_course(course_code : str)
+  + enrol_student(student : Student)
+  + add_lecturer(lecturer : Lecturer)
+  + honours_distribution() : dict
+  + department_report() : str
+
+  + __len__()
+  + __contains__(matric_no)
+  + __str__()
+  + __repr__()
 }
-class GradeError {
-  - field: str
-  - value: object
-  - valid_range: str
+
+' =========================
+' EXCEPTION CLASSES
+' =========================
+
+class GradeError <<exception>> {
+  + field : str
+  + value : object
+  + valid_range : str
+
+  + __init__(field, value, valid_range)
+  + __str__() : str
 }
+
+class PrerequisiteError <<exception>> {
+  + course_code : str
+  + missing_prerequisites : list
+
+  + __init__(course_code, missing)
+  + __str__() : str
+}
+
+class CreditLoadError <<exception>> {
+  + attempted_units : int
+  + min_units : int = 15
+  + max_units : int = 24
+
+  + __init__(attempted, min, max)
+  + __str__() : str
+}
+
+class DepartmentError <<exception>> {
+  + dept_code : str
+  + detail : str
+
+  + __init__(dept_code, detail)
+  + __str__() : str
+}
+
+class ValueError
+
+' =========================
+' INHERITANCE
+' =========================
 
 Person <|-- Student
 Person <|-- Lecturer
 Student <|-- GraduateStudent
-ResearchWorkerMixin <|-- GraduateStudent
-Department *-- Course
-Department o-- Student
-Department o-- Lecturer
-Semester o-- EnrolmentRecord
-GraduateStudent ..|> ResearchWorkerMixin
+ResearchWorkerMixin <|.. GraduateStudent
+
+ValueError <|-- GradeError
+ValueError <|-- PrerequisiteError
+ValueError <|-- CreditLoadError
+ValueError <|-- DepartmentError
+
+' =========================
+' COMPOSITION (FILLED)
+' =========================
+
+Department "1" *-- "0..*" Course
+Semester "1" *-- "0..*" EnrolmentRecord
+
+' =========================
+' AGGREGATION (HOLLOW)
+' =========================
+
+Department "1" o-- "0..*" Student
+Department "1" o-- "0..*" Lecturer
+Student "1" o-- "0..*" Semester
+ResearchWorkerMixin "0..*" o-- "0..1" Lecturer : supervisor
+
+' =========================
+' DEPENDENCIES (DASHED)
+' =========================
+
+EnrolmentRecord ..> Course
+EnrolmentRecord ..> Student
+EnrolmentRecord ..> GradeError
+EnrolmentRecord ..> PrerequisiteError
+
+Semester ..> CreditLoadError
+Department ..> DepartmentError
+
 @enduml
