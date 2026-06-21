@@ -55,7 +55,7 @@ class Student(Person):
     """Concrete student class representing a university undergraduate."""
 
     _VALID_LEVELS = [100, 200, 300, 400, 500, 600, 700, 800]
-    _MATRIC_PATTERN = re.compile(r"^[A-Z]{3,6}/\d{4}/\d{3}$")
+    _MATRIC_PATTERN = re.compile(r"^[A-Z]{3,6}/\d{4}/\d{3,4}$")
 
     def __init__(
         self,
